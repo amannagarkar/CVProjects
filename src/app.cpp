@@ -1,35 +1,36 @@
-#include <iostream>
-#include <filesystem>
-#include <opencv2/opencv.hpp>
-#include "ImageProcessing.h"
-
-namespace fs = std::filesystem;
-using namespace cv;
-using namespace std;
+#include "app.h"
 
 int main() {
-    string input_dir = "/Users/amannagarkar/Documents/SCU Phd Coursework/CV - CSEN 344/Assignment 1 - Image Operations/res/Images";
-    string output_dir = "/Users/amannagarkar/Documents/SCU Phd Coursework/CV - CSEN 344/Assignment 1 - Image Operations/res/BWImages";
+    string input_dir = "res/images";
+    string output_dir = "res/processed_images";
+    fs::create_directory(output_dir);
 
-    fs::create_directories(output_dir);
-
-    for (const auto& entry: fs::directory_iterator(input_dir) ){
-        
-        if (entry.is_regular_file()){
-            string image_path = entry.path().string();
-            Mat img = imread(image_path, IMREAD_COLOR);
-            if(img.empty()){
-                cout<<"Image is empty"<<endl;
+    for (const auto& entry : fs::directory_iterator(input_dir)) {
+        if (entry.is_regular_file()) {
+            Mat img = imread(entry.path().string());
+            if (img.empty()) {
+                cerr << "Failed to load " << entry.path() << endl;
                 continue;
             }
 
-            Mat gray_img = convertToGreyScale(img);
+            // Grayscale Conversion
+            Mat gray = convertToGrayscale(img);
 
-            string output_img_path = output_dir + "/" + entry.path().filename().string(); 
-            imwrite(output_img_path, gray_img);
+            // Sobel Operator
+            Mat grad_x, grad_y, magnitude_L1, magnitude_L2, gradient_angle;
+            applySobel(gray, grad_x, grad_y, magnitude_L1, magnitude_L2, gradient_angle);
 
+            // Laplacian Operator
+            Mat laplacian = applyLaplacian(gray);
+
+            // Save Outputs
+            string base_name = entry.path().stem().string();
+            imwrite(output_dir + "/" + base_name + "_gray.png", gray);
+            imwrite(output_dir + "/" + base_name + "_magnitude_L1.png", magnitude_L1);
+            imwrite(output_dir + "/" + base_name + "_magnitude_L2.png", magnitude_L2);
+            imwrite(output_dir + "/" + base_name + "_gradient_angle.png", gradient_angle);
+            imwrite(output_dir + "/" + base_name + "_laplacian.png", laplacian);
         }
-        cout<<"Images Saved in: "<<output_dir<<endl;
     }
 
     return 0;

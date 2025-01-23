@@ -2,14 +2,8 @@
 #define IMAGE_PROCESSING_H
 
 #include <opencv2/opencv.hpp>
-#include <iostream>
-#include<filesystem>
+#include <string>
 
-namespace fs = std::filesystem;
-using namespace cv;
-using namespace std;
+cv::Mat convertToGrayscale(const cv::Mat& img);
 
-Mat convertToGreyScale(const Mat& img);
-Mat convolve(const Mat& img, const vector<vector<int>>& kernel);
-
-#endif
+#endif // IMAGE_PROCESSING_H
