@@ -1,29 +1,28 @@
 cmake_minimum_required(VERSION 3.10)
-project(OpenCV_Project)
+project(ImageOperations)
 
+# Enable C++17
 set(CMAKE_CXX_STANDARD 17)
 
-# Find OpenCV
-find_package(OpenCV REQUIRED PATHS /opt/homebrew/opt/opencv/lib/cmake/opencv4)
+# Set output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Debug)
 
-# Include directories
+# Find OpenCV
+find_package(OpenCV REQUIRED)
+
+# Include OpenCV headers
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Add source files
+# Add your source files
 set(SOURCES
     src/app.cpp
+    src/ImageProcessing.cpp
     src/SobelOperator.cpp
     src/LaplacianOperator.cpp
-    src/ImageProcessing.cpp
 )
 
-# Add executable
-add_executable(OpenCV_Project ${SOURCES})
-
-# Specify output directory
-set_target_properties(OpenCV_Project PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-)
+# Create executable
+add_executable(main ${SOURCES})
 
 # Link OpenCV libraries
-target_link_libraries(OpenCV_Project ${OpenCV_LIBS})
+target_link_libraries(main ${OpenCV_LIBS})
